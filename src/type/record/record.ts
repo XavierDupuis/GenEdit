@@ -1,7 +1,6 @@
-import { Attributable } from '@type/attribute/attributable';
 import { RecordId } from '@type/record/record-id';
-import { Taggable } from '@type/tag/taggable';
+import { Rootable } from '@type/root/rootable';
 
-export interface Record extends Taggable, Attributable {
+export interface Record extends Rootable {
     id: RecordId;
 }

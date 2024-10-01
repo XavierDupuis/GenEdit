@@ -1,47 +1,49 @@
 import { SuccessOrErrorResult } from '@type/parser/success-or-error-result';
 import { RecordId, isRecordId } from '@type/record/record-id';
-import { SplitLineData } from './split-line';
+import { SplitLineData } from '../split-line';
 import { AttributeTag, isAttributeTag } from '@type/tag/attribute-tag';
 import { DatasetTag, isDatasetTag } from '@type/tag/dataset-tag';
 import { RecordTag, isRecordTag } from '@type/tag/record-tag';
 import { Tag } from '@type/tag/tag';
-import { TopLevelTag } from '@type/tag/top-level-tag';
+import { RootTag } from '@type/tag/root-tag';
 
-interface BaseParseLineData {
-    type: string;
+export type SyntaxicParseType = 'dataset' | 'record' | 'attribute';
+
+interface BaseSyntaxicParseData {
+    type: SyntaxicParseType;
     depth: number;
     tag: Tag;
 }
 
-interface TopLevelParseLineData extends BaseParseLineData {
+interface RootSyntaxicParseData extends BaseSyntaxicParseData {
     depth: 0;
-    tag: TopLevelTag;
+    tag: RootTag;
 }
 
-export interface DatasetDeclarationParseLineData extends TopLevelParseLineData {
+export interface DatasetDeclarationSyntaxicParseData extends RootSyntaxicParseData {
     type: 'dataset';
     depth: 0;
     tag: DatasetTag;
 }
 
-export interface RecordDeclarationParseLineData extends TopLevelParseLineData {
+export interface RecordDeclarationSyntaxicParseData extends RootSyntaxicParseData {
     type: 'record';
     depth: 0;
     tag: RecordTag;
     id: RecordId;
 }
 
-export interface AttributeDeclarationParseLineData extends BaseParseLineData {
+export interface AttributeDeclarationSyntaxicParseData extends BaseSyntaxicParseData {
     type: 'attribute';
     tag: AttributeTag;
     value: string | null;
 }
 
-export type ParseLineData = RecordDeclarationParseLineData | DatasetDeclarationParseLineData | AttributeDeclarationParseLineData;
+export type SyntaxicParseData = RecordDeclarationSyntaxicParseData | DatasetDeclarationSyntaxicParseData | AttributeDeclarationSyntaxicParseData;
 
-export type ParseLineResult = SuccessOrErrorResult<ParseLineData>;
+export type SyntaxicParseResult = SuccessOrErrorResult<SyntaxicParseData>;
 
-export const parseLine = ({ first, second, third }: SplitLineData): ParseLineResult => {
+export const syntaxicParseLine = ({ first, second, third }: SplitLineData): SyntaxicParseResult => {
     const depth = parseInt(first, 10);
     if (Number.isNaN(depth)) {
         return { success: false, error: `Invalid depth '${depth}'` };

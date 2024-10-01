@@ -1,25 +1,5 @@
 <router-outlet></router-outlet>
 
-@for (recordList of recordListsList; track $index) {
-    @for (record of recordList; track $index) {
-        <h3>{{ record.id }}</h3>
-        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: record.attributes }"></ng-container>
-    }
-}
+<app-file-selector (fileContentChanged)="fileContentChanged($event)"></app-file-selector>
 
-<ng-template #attributesTemplate let-attributes="attributes">
-    @if (attributes.length > 0) {
-        <ul>
-            @for (attribute of attributes; track $index) {
-                <li>
-                    <ng-container *ngTemplateOutlet="attributeTemplate; context: { attribute: attribute }"></ng-container>
-                </li>
-            }
-        </ul>
-    }
-</ng-template>
-
-<ng-template #attributeTemplate let-attribute="attribute">
-    <strong>{{ attribute.tag }}:</strong> {{ attribute.value }}
-    <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: attribute.attributes }"></ng-container>
-</ng-template>
+<app-full-tree-view [rootableListsList]="rootableListsList"></app-full-tree-view>

@@ -1,7 +1,4 @@
-import { Attributable } from '@type/attribute/attributable';
+import { Rootable } from '@type/root/rootable';
 import { DatasetTags } from '@type/tag/dataset-tag';
-import { Taggable } from '@type/tag/taggable';
 
-export interface Header extends Taggable, Attributable {}
-
-export const HEADER: Header = { tag: DatasetTags.HEAD, attributes: [] };
+export const HEADER: Rootable = { tag: DatasetTags.HEAD, id: DatasetTags.HEAD, attributes: [] };

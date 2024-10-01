@@ -1,5 +1,5 @@
 import { Tag } from '@type/tag/tag';
 
-export abstract class Taggable {
-    abstract tag: Tag;
+export interface Taggable {
+    tag: Tag;
 }

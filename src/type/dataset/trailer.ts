@@ -1,7 +1,4 @@
-import { Attributable } from '@type/attribute/attributable';
+import { Rootable } from '@type/root/rootable';
 import { DatasetTags } from '@type/tag/dataset-tag';
-import { Taggable } from '@type/tag/taggable';
 
-export interface Trailer extends Taggable, Attributable {}
-
-export const TRAILER: Trailer = { tag: DatasetTags.TRLR, attributes: [] };
+export const TRAILER: Rootable = { tag: DatasetTags.TRLR, id: DatasetTags.TRLR, attributes: [] };

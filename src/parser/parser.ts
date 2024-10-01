@@ -1,67 +1,88 @@
-import { Record } from '@type/record/record';
-import { splitLine } from './split-line';
-import { parseLine } from './parse-line';
-import { Attribute } from '@type/attribute/attribute';
+import { splitLine, SplitLineData, SplitLineResult } from './split-line';
 import { AttributableStacker } from '../util/attributable-stacker';
-import { ifAlreadyExistsPolicies, TaggableRecordsMapper } from '../util/taggable-records-mapper';
-import { HEADER } from '@type/dataset/header';
-import { DatasetTags } from '@type/tag/dataset-tag';
-import { TRAILER } from '@type/dataset/trailer';
+import { ifAlreadyExistsPolicies, RootableMapper } from '../util/rootable-mapper';
+import { SyntaxicParseData, syntaxicParseLine, SyntaxicParseResult } from './syntaxic-parse-line/syntaxic-parse';
+import { SemanticParseLineHandler } from './sematic-parse/semantic-parse';
 
-export const parse = (lines: string[]): TaggableRecordsMapper => {
+export const parse = (lines: string[]): RootableMapper => {
     console.log(`Parsing ${lines.length} lines`);
 
     const stacker = new AttributableStacker();
-    const mapper = new TaggableRecordsMapper(ifAlreadyExistsPolicies.OVERWRITE);
+    const mapper = new RootableMapper(ifAlreadyExistsPolicies.OVERWRITE);
+    const semanticParseLineHandler = new SemanticParseLineHandler();
 
+    const splitLineResults = getSplitLineResults(lines);
+    const syntaxicParseResults = getSyntaxicParseResults(splitLineResults);
+
+    let lastKnownDepth = 0;
+    let wasLastLineSkipped = false;
+    for (const syntaxicParseResult of syntaxicParseResults) {
+        if (!syntaxicParseResult.success) {
+            console.log('Skipping syntaxic parsed result:', syntaxicParseResult.error);
+            wasLastLineSkipped = true;
+            continue;
+        }
+
+        const syntaxicParseResultContext = getSyntaxicParseResultContext(syntaxicParseResult);
+        if (wasLastLineSkipped && syntaxicParseResult.depth > lastKnownDepth) {
+            console.log(
+                `Skipping syntaxic parsed result: '${syntaxicParseResultContext}' `,
+                `This result is deeper (${syntaxicParseResult.depth}) than last known parsed ancestor (${lastKnownDepth})`
+            );
+            continue;
+        }
+
+        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, stacker, mapper);
+        if (parsed) {
+            lastKnownDepth = syntaxicParseResult.depth;
+        } else {
+            console.log(`Skipping line: '${syntaxicParseResultContext}' `, `Unhandled type '${syntaxicParseResult.type}'`);
+        }
+        wasLastLineSkipped = !parsed;
+    }
+
+    return mapper;
+};
+
+const getSplitLineResults = (lines: string[]): SplitLineResult[] => {
+    const splitLineResults = [];
     for (const line of lines) {
         const splitLineResult = splitLine(line);
         if (!splitLineResult.success) {
             console.log(`Skipping line: '${line}' `, 'Split error', splitLineResult.error);
-            continue;
         }
-
-        const parseLineResult = parseLine(splitLineResult);
-        if (!parseLineResult.success) {
-            console.log(`Skipping line: '${line}' `, 'Parse error', parseLineResult.error);
-            continue;
-        }
-
-        if (parseLineResult.type === 'attribute') {
-            const attribute: Attribute = {
-                tag: parseLineResult.tag,
-                value: parseLineResult.value,
-                attributes: [],
-            };
-            stacker.push(attribute, parseLineResult.depth);
-            continue;
-        }
-
-        if (parseLineResult.type === 'record') {
-            const record: Record = {
-                tag: parseLineResult.tag,
-                id: parseLineResult.id,
-                attributes: [],
-            };
-            stacker.push(record, parseLineResult.depth);
-            mapper.add(record);
-            continue;
-        }
-
-        if (parseLineResult.type === 'dataset') {
-            if (parseLineResult.tag === DatasetTags.HEAD) {
-                stacker.push(HEADER, parseLineResult.depth);
-                continue;
-            }
-            if (parseLineResult.tag === DatasetTags.TRLR) {
-                stacker.push(TRAILER, parseLineResult.depth);
-                continue;
-            }
-            console.log(`Skipping line: '${line}' `, `Unhandled dataset tag '${parseLineResult.tag}'`);
-        }
-
-        console.log(`Skipping line: '${line}' `, `Unhandled type '${parseLineResult.type}'`);
+        splitLineResults.push(splitLineResult);
     }
+    return splitLineResults;
+};
 
-    return mapper;
+const getSyntaxicParseResults = (lines: SplitLineResult[]): SyntaxicParseResult[] => {
+    const parseLineResults = [];
+    for (const line of lines) {
+        if (!line.success) {
+            // Silent skip, was already logged
+            continue;
+        }
+        const parseLineResult = syntaxicParseLine(line);
+        if (!parseLineResult.success) {
+            console.log(`Skipping line: '${getSplitLineResultContext(line)}' `, 'Parse error', parseLineResult.error);
+        }
+        parseLineResults.push(parseLineResult);
+    }
+    return parseLineResults;
+};
+
+const getSplitLineResultContext = (splitLineData: SplitLineData): string => {
+    return `Depth '${splitLineData.first}', Second '${splitLineData.second}', Third '${splitLineData.third ?? '<Empty string>'}'`;
+};
+
+const getSyntaxicParseResultContext = (syntaxicParseData: SyntaxicParseData): string => {
+    switch (syntaxicParseData.type) {
+        case 'attribute':
+            return `Attribute with tag '${syntaxicParseData.tag}' and value '${syntaxicParseData.value ?? '<Empty string>'}'`;
+        case 'record':
+            return `Record with id '${syntaxicParseData.id}' and tag '${syntaxicParseData.tag}'`;
+        case 'dataset':
+            return `Dataset with tag '${syntaxicParseData.tag}'`;
+    }
 };

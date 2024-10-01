@@ -1,0 +1,10 @@
+<div class="file-upload-container">
+    <h2>Select a GEDCOM File</h2>
+    <input type="file" (change)="onFileSelected($event)" [disabled]="isProcessing()" accept=".ged" />
+
+    @if (isProcessing()) {
+        <p>
+            <i>Processing...</i>
+        </p>
+    }
+</div>

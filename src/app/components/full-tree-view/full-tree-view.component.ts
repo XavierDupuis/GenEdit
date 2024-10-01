@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
+import { isRecordIdReference, isRecordId } from '@type/record/record-id';
 import { Rootable } from '@type/root/rootable';
 
 @Component({
@@ -11,4 +12,12 @@ import { Rootable } from '@type/root/rootable';
 })
 export class FullTreeViewComponent {
     public rootableListsList = input.required<Rootable[][]>();
+
+    protected isRecordReference(value?: string) {
+        return isRecordIdReference(value);
+    }
+
+    protected isExternalReference(value?: string) {
+        return value?.startsWith('http');
+    }
 }

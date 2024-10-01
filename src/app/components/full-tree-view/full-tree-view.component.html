@@ -1,6 +1,6 @@
 @for (rootablesList of rootableListsList(); track $index) {
-    @for (rootable of rootablesList; track $index) {
-        <h3>{{ rootable.id }}</h3>
+    @for (rootable of rootablesList; track rootable.id) {
+        <h3 id="@{{ rootable.id }}@">{{ rootable.id }}</h3>
         <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: rootable.attributes }"></ng-container>
     }
 }
@@ -18,6 +18,21 @@
 </ng-template>
 
 <ng-template #attributeTemplate let-attribute="attribute">
-    <strong>{{ attribute.tag }}:</strong> {{ attribute.value }}
+    <strong>{{ attribute.tag }}:</strong>
+    @if (isRecordReference(attribute.value)) {
+        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: attribute.value }"></ng-container>
+    } @else if (isExternalReference(attribute.value)) {
+        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: attribute.value }"></ng-container>
+    } @else {
+        {{ attribute.value }}
+    }
     <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: attribute.attributes }"></ng-container>
+</ng-template>
+
+<ng-template #internalReferenceTemplate let-internalReference="internalReference">
+    <a href="#{{ internalReference }}">{{ internalReference }}</a>
+</ng-template>
+
+<ng-template #externalReferenceTemplate let-externalReference="externalReference">
+    <a [href]="externalReference" target="_blank" rel="noopener noreferrer">{{ externalReference }}</a>
 </ng-template>

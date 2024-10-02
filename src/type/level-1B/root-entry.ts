@@ -1,11 +1,11 @@
 import { Attribute } from '@type/level-2/attribute';
-import { Entry } from '@type/level-2/entry';
+import { Record } from '@type/level-2/entry';
 import { RootTag } from '@type/tag/root-tag';
 
-export interface RootEntry<I = string> extends Entry<I> {
+export interface RootRecord<I = string> extends Record<I> {
     tag: RootTag;
 }
 
-export interface RootAttributeEntry<IV = string> extends Entry<IV>, Attribute<IV> {
+export interface RootAttributeRecord<IV = string> extends Record<IV>, Attribute<IV> {
     tag: RootTag;
 }

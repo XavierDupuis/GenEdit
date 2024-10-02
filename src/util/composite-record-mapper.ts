@@ -1,4 +1,4 @@
-import { CompositeEntry } from '@type/level-3/composite-entry';
+import { CompositeRecord } from '@type/level-3/composite-entry';
 import { Tag } from '@type/tag/tag';
 
 export const ifAlreadyExistsPolicies = {
@@ -8,7 +8,7 @@ export const ifAlreadyExistsPolicies = {
 
 export type ifAlreadyExistsPolicy = keyof typeof ifAlreadyExistsPolicies;
 
-export class CompositeEntryMapper<T extends CompositeEntry = CompositeEntry> {
+export class CompositeRecordMapper<I extends string = string, T extends CompositeRecord<I> = CompositeRecord<I>> {
     private elementByIdByTag = new Map<Tag, Map<string, T>>();
 
     constructor(private ifAlreadyExistsPolicy: ifAlreadyExistsPolicy) {}

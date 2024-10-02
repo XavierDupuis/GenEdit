@@ -1,18 +1,17 @@
 import { splitLine, SplitLineData, SplitLineResult } from './split-line';
 import { AttributableStacker } from '../util/attributable-stacker';
-import { ifAlreadyExistsPolicies, CompositeEntryMapper } from '../util/composite-entry-mapper';
+import { ifAlreadyExistsPolicies, CompositeRecordMapper } from '../util/composite-record-mapper';
 import { SemanticParseLineHandler } from './sematic-parse/semantic-parse';
 import { ReferenceMapper } from '@util/reference-mapper';
 import { CompositeAttribute } from '@type/level-3/composite-attribute';
-import { CompositeEntry } from '@type/level-3/composite-entry';
 import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { syntaxicParseLine } from './syntaxic-parse-line/syntaxic-parse';
 
-export const parse = (lines: string[]): { compositeEntryMapper: CompositeEntryMapper; referenceMapper: ReferenceMapper } => {
+export const parse = (lines: string[]): { compositeRecordMapper: CompositeRecordMapper; referenceMapper: ReferenceMapper } => {
     console.log(`Parsing ${lines.length} lines`);
 
     const attributableStacker = new AttributableStacker<CompositeAttribute<string>>();
-    const compositeEntryMapper = new CompositeEntryMapper<CompositeEntry<string>>(ifAlreadyExistsPolicies.OVERWRITE);
+    const compositeRecordMapper = new CompositeRecordMapper(ifAlreadyExistsPolicies.OVERWRITE);
     const referenceMapper = new ReferenceMapper();
     const semanticParseLineHandler = new SemanticParseLineHandler();
 
@@ -37,7 +36,7 @@ export const parse = (lines: string[]): { compositeEntryMapper: CompositeEntryMa
             continue;
         }
 
-        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, attributableStacker, referenceMapper, compositeEntryMapper);
+        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, attributableStacker, referenceMapper, compositeRecordMapper);
         if (parsed) {
             lastKnownDepth = syntaxicParseResult.depth;
         } else {
@@ -46,7 +45,7 @@ export const parse = (lines: string[]): { compositeEntryMapper: CompositeEntryMa
         wasLastLineSkipped = !parsed;
     }
 
-    return { compositeEntryMapper, referenceMapper };
+    return { compositeRecordMapper, referenceMapper };
 };
 
 const getSplitLineResults = (lines: string[]): SplitLineResult[] => {

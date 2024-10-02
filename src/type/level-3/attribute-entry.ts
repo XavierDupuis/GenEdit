@@ -1,4 +1,4 @@
 import { Attribute } from '@type/level-2/attribute';
-import { Entry } from '@type/level-2/entry';
+import { Record } from '@type/level-2/record';
 
-export interface AttributeEntry<V = string, I = string> extends Attribute<V>, Entry<I> {}
+export interface AttributeRecord<V = string, I = string> extends Attribute<V>, Record<I> {}

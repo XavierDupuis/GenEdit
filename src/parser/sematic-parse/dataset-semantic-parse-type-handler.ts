@@ -11,10 +11,10 @@ export class DatasetSemanticParseTypeHandler extends SemanticParseTypeHandler {
             return { handled: false };
         }
         if (syntaxicParseData.tag === DatasetTags.HEAD) {
-            return { handled: true, compositeEntry: HEADER, compositeAttribute: HEADER };
+            return { handled: true, ...HEADER };
         }
         if (syntaxicParseData.tag === DatasetTags.TRLR) {
-            return { handled: true, compositeEntry: TRAILER, compositeAttribute: TRAILER };
+            return { handled: true, ...TRAILER };
         }
         return { handled: false };
     }

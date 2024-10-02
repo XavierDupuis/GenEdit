@@ -4,7 +4,7 @@ import { parse } from '../parser/parser';
 import { FileSelectorComponent } from '@app/components/file-selector/file-selector.component';
 import { FullTreeViewComponent } from '@app/components/full-tree-view/full-tree-view.component';
 import { ReferenceMapper } from '@util/reference-mapper';
-import { CompositeEntry } from '@type/level-3/composite-entry';
+import { CompositeRecord } from '@type/level-3/composite-entry';
 
 @Component({
     selector: 'app-root',
@@ -16,7 +16,7 @@ import { CompositeEntry } from '@type/level-3/composite-entry';
 export class AppComponent {
     title = 'GenEdit';
 
-    protected compositeEntryListsList: CompositeEntry[][] = [];
+    protected compositeRecordListsList: CompositeRecord[][] = [];
     protected referenceMapper?: ReferenceMapper;
 
     protected fileContentChanged(fileContent: string) {
@@ -24,8 +24,8 @@ export class AppComponent {
             .split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0);
-        const { compositeEntryMapper: entryMapper, referenceMapper } = parse(lines);
-        this.compositeEntryListsList = entryMapper.toArray();
+        const { compositeRecordMapper: entryMapper, referenceMapper } = parse(lines);
+        this.compositeRecordListsList = entryMapper.toArray();
         this.referenceMapper = referenceMapper;
     }
 }

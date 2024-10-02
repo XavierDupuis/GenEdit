@@ -1,6 +1,6 @@
 import { CompositeAttribute } from '@type/level-3/composite-attribute';
-import { CompositeEntry } from '@type/level-3/composite-entry';
+import { CompositeAttributeRecord } from '@type/level-4/composite-attribute-entry';
 
 export type SemanticParseTypeResult<I = string, V = string> =
-    | { handled: true; compositeAttribute: CompositeAttribute<V>; compositeEntry?: CompositeEntry<I> }
+    | ({ handled: true } & (CompositeAttribute<V> | CompositeAttributeRecord<I, V>))
     | { handled: false };

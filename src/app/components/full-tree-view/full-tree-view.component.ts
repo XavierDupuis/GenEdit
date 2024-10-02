@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
 import { isRecordId, isRecordIdReference, recordIdToReference } from '@type/level-1B/record-id';
 import { CompositeAttribute } from '@type/level-3/composite-attribute';
-import { CompositeEntry } from '@type/level-3/composite-entry';
+import { CompositeRecord } from '@type/level-3/composite-entry';
 import { ReferenceMapper } from '@util/reference-mapper';
 
 @Component({
@@ -13,7 +13,7 @@ import { ReferenceMapper } from '@util/reference-mapper';
     styleUrl: './full-tree-view.component.scss',
 })
 export class FullTreeViewComponent {
-    public compositeEntryListsList = input.required<CompositeEntry[][]>();
+    public compositeRecordListsList = input.required<CompositeRecord[][]>();
     public referenceMapper = input<ReferenceMapper>();
     protected isReferencePopupVisible = signal(false);
     protected popupPosition = signal<{ x: number; y: number } | null>(null);

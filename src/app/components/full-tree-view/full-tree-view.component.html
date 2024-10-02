@@ -1,7 +1,7 @@
-@for (compositeEntryList of compositeEntryListsList(); track $index) {
-    @for (compositeEntry of compositeEntryList; track compositeEntry.id) {
-        <h3 (click)="showReferences($event, compositeEntry.id)" id="@{{ compositeEntry.id }}@">{{ compositeEntry.id }}</h3>
-        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: compositeEntry.attributes }"></ng-container>
+@for (compositeRecordList of compositeRecordListsList(); track $index) {
+    @for (compositeRecord of compositeRecordList; track compositeRecord.id) {
+        <h3 (click)="showReferences($event, compositeRecord.id)" id="@{{ compositeRecord.id }}@">{{ compositeRecord.id }}</h3>
+        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: compositeRecord.attributes }"></ng-container>
     }
 }
 

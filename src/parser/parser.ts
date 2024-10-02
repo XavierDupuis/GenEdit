@@ -1,14 +1,19 @@
 import { splitLine, SplitLineData, SplitLineResult } from './split-line';
 import { AttributableStacker } from '../util/attributable-stacker';
-import { ifAlreadyExistsPolicies, RootableMapper } from '../util/rootable-mapper';
-import { SyntaxicParseData, syntaxicParseLine, SyntaxicParseResult } from './syntaxic-parse-line/syntaxic-parse';
+import { ifAlreadyExistsPolicies, CompositeEntryMapper } from '../util/composite-entry-mapper';
 import { SemanticParseLineHandler } from './sematic-parse/semantic-parse';
+import { ReferenceMapper } from '@util/reference-mapper';
+import { CompositeAttribute } from '@type/level-3/composite-attribute';
+import { CompositeEntry } from '@type/level-3/composite-entry';
+import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
+import { syntaxicParseLine } from './syntaxic-parse-line/syntaxic-parse';
 
-export const parse = (lines: string[]): RootableMapper => {
+export const parse = (lines: string[]): { compositeEntryMapper: CompositeEntryMapper; referenceMapper: ReferenceMapper } => {
     console.log(`Parsing ${lines.length} lines`);
 
-    const stacker = new AttributableStacker();
-    const mapper = new RootableMapper(ifAlreadyExistsPolicies.OVERWRITE);
+    const attributableStacker = new AttributableStacker<CompositeAttribute<string>>();
+    const compositeEntryMapper = new CompositeEntryMapper<CompositeEntry<string>>(ifAlreadyExistsPolicies.OVERWRITE);
+    const referenceMapper = new ReferenceMapper();
     const semanticParseLineHandler = new SemanticParseLineHandler();
 
     const splitLineResults = getSplitLineResults(lines);
@@ -32,7 +37,7 @@ export const parse = (lines: string[]): RootableMapper => {
             continue;
         }
 
-        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, stacker, mapper);
+        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, attributableStacker, referenceMapper, compositeEntryMapper);
         if (parsed) {
             lastKnownDepth = syntaxicParseResult.depth;
         } else {
@@ -41,7 +46,7 @@ export const parse = (lines: string[]): RootableMapper => {
         wasLastLineSkipped = !parsed;
     }
 
-    return mapper;
+    return { compositeEntryMapper, referenceMapper };
 };
 
 const getSplitLineResults = (lines: string[]): SplitLineResult[] => {

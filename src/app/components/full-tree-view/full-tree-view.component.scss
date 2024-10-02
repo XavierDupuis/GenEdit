@@ -1,0 +1,17 @@
+.popup {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+}
+
+h3 {
+    cursor: pointer;
+}
+
+h3:hover {
+    color: #007bff;
+}

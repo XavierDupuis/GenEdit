@@ -1,7 +1,7 @@
-@for (rootablesList of rootableListsList(); track $index) {
-    @for (rootable of rootablesList; track rootable.id) {
-        <h3 id="@{{ rootable.id }}@">{{ rootable.id }}</h3>
-        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: rootable.attributes }"></ng-container>
+@for (compositeEntryList of compositeEntryListsList(); track $index) {
+    @for (compositeEntry of compositeEntryList; track compositeEntry.id) {
+        <h3 (click)="showReferences($event, compositeEntry.id)" id="@{{ compositeEntry.id }}@">{{ compositeEntry.id }}</h3>
+        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: compositeEntry.attributes }"></ng-container>
     }
 }
 
@@ -36,3 +36,19 @@
 <ng-template #externalReferenceTemplate let-externalReference="externalReference">
     <a [href]="externalReference" target="_blank" rel="noopener noreferrer">{{ externalReference }}</a>
 </ng-template>
+
+<div class="popup" *ngIf="isReferencePopupVisible()" [ngStyle]="{ top: popupPosition()?.y + 'px', left: popupPosition()?.x + 'px' }">
+    <h3>References</h3>
+    <ul>
+        @for (reference of references(); track $index) {
+            @if (reference.value) {
+                <li>
+                    {{ reference.tag }}: <a href="#@{{ reference.value }}@" (click)="hideReferences()">{{ reference.value }}</a>
+                </li>
+            } @else {
+                <li>{{ reference.tag }}</li>
+            }
+        }
+    </ul>
+    <button (click)="hideReferences()">Close</button>
+</div>

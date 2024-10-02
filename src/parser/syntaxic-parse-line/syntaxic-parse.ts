@@ -1,47 +1,9 @@
-import { SuccessOrErrorResult } from '@type/parser/success-or-error-result';
-import { RecordId, isRecordId } from '@type/record/record-id';
+import { isRecordId } from '@type/level-1B/record-id';
+import { SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
+import { isAttributeTag } from '@type/tag/attribute-tag';
+import { isDatasetTag } from '@type/tag/dataset-tag';
+import { isRecordTag } from '@type/tag/record-tag';
 import { SplitLineData } from '../split-line';
-import { AttributeTag, isAttributeTag } from '@type/tag/attribute-tag';
-import { DatasetTag, isDatasetTag } from '@type/tag/dataset-tag';
-import { RecordTag, isRecordTag } from '@type/tag/record-tag';
-import { Tag } from '@type/tag/tag';
-import { RootTag } from '@type/tag/root-tag';
-
-export type SyntaxicParseType = 'dataset' | 'record' | 'attribute';
-
-interface BaseSyntaxicParseData {
-    type: SyntaxicParseType;
-    depth: number;
-    tag: Tag;
-}
-
-interface RootSyntaxicParseData extends BaseSyntaxicParseData {
-    depth: 0;
-    tag: RootTag;
-}
-
-export interface DatasetDeclarationSyntaxicParseData extends RootSyntaxicParseData {
-    type: 'dataset';
-    depth: 0;
-    tag: DatasetTag;
-}
-
-export interface RecordDeclarationSyntaxicParseData extends RootSyntaxicParseData {
-    type: 'record';
-    depth: 0;
-    tag: RecordTag;
-    id: RecordId;
-}
-
-export interface AttributeDeclarationSyntaxicParseData extends BaseSyntaxicParseData {
-    type: 'attribute';
-    tag: AttributeTag;
-    value: string | null;
-}
-
-export type SyntaxicParseData = RecordDeclarationSyntaxicParseData | DatasetDeclarationSyntaxicParseData | AttributeDeclarationSyntaxicParseData;
-
-export type SyntaxicParseResult = SuccessOrErrorResult<SyntaxicParseData>;
 
 export const syntaxicParseLine = ({ first, second, third }: SplitLineData): SyntaxicParseResult => {
     const depth = parseInt(first, 10);

@@ -3,7 +3,8 @@ import { RouterOutlet } from '@angular/router';
 import { parse } from '../parser/parser';
 import { FileSelectorComponent } from '@app/components/file-selector/file-selector.component';
 import { FullTreeViewComponent } from '@app/components/full-tree-view/full-tree-view.component';
-import { Rootable } from '@type/root/rootable';
+import { ReferenceMapper } from '@util/reference-mapper';
+import { CompositeEntry } from '@type/level-3/composite-entry';
 
 @Component({
     selector: 'app-root',
@@ -15,15 +16,16 @@ import { Rootable } from '@type/root/rootable';
 export class AppComponent {
     title = 'GenEdit';
 
-    protected rootableListsList: Rootable[][] = [];
+    protected compositeEntryListsList: CompositeEntry[][] = [];
+    protected referenceMapper?: ReferenceMapper;
 
     protected fileContentChanged(fileContent: string) {
         const lines = fileContent
             .split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0);
-        const mapper = parse(lines);
-        this.rootableListsList = mapper.toArray();
-        console.log(this.rootableListsList);
+        const { compositeEntryMapper: entryMapper, referenceMapper } = parse(lines);
+        this.compositeEntryListsList = entryMapper.toArray();
+        this.referenceMapper = referenceMapper;
     }
 }

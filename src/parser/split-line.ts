@@ -1,4 +1,4 @@
-import { SuccessOrErrorResult } from '@type/parser/success-or-error-result';
+import { SuccessOrErrorResult } from '@type/success-or-error-result';
 
 export interface SplitLineData {
     first: string;

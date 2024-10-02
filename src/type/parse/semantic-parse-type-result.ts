@@ -1,4 +1,6 @@
-import { Attributable } from '@type/attribute/attributable';
-import { Rootable } from '@type/root/rootable';
+import { CompositeAttribute } from '@type/level-3/composite-attribute';
+import { CompositeEntry } from '@type/level-3/composite-entry';
 
-export type SemanticParseTypeResult = { handled: true; attributable: Attributable; rootable?: Rootable } | { handled: false };
+export type SemanticParseTypeResult<I = string, V = string> =
+    | { handled: true; compositeAttribute: CompositeAttribute<V>; compositeEntry?: CompositeEntry<I> }
+    | { handled: false };

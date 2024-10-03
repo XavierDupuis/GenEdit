@@ -1,9 +1,9 @@
 import { isRecordId } from '@type/level-1B/record-id';
+import { SplitLineData } from '@type/parse/split-line-result';
 import { SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { isAttributeTag } from '@type/tag/attribute-tag';
 import { isDatasetTag } from '@type/tag/dataset-tag';
 import { isRecordTag } from '@type/tag/record-tag';
-import { SplitLineData } from '../split-line';
 
 export const syntaxicParseLine = ({ first, second, third }: SplitLineData): SyntaxicParseResult => {
     const depth = parseInt(first, 10);

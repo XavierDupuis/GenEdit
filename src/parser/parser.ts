@@ -1,11 +1,12 @@
-import { splitLine, SplitLineData, SplitLineResult } from './split-line';
 import { AttributableStacker } from '../util/attributable-stacker';
 import { ifAlreadyExistsPolicies, CompositeRecordMapper } from '../util/composite-record-mapper';
-import { SemanticParseLineHandler } from './sematic-parse/semantic-parse';
+import { SemanticParseLineHandler } from './sematic/semantic-parse';
 import { ReferenceMapper } from '@util/reference-mapper';
 import { CompositeAttribute } from '@type/level-3/composite-attribute';
 import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
-import { syntaxicParseLine } from './syntaxic-parse-line/syntaxic-parse';
+import { syntaxicParseLine } from './syntaxic/syntaxic-parse';
+import { SplitLineData, SplitLineResult } from '@type/parse/split-line-result';
+import { splitLine } from './structural/split-line';
 
 export const parse = (lines: string[]): { compositeRecordMapper: CompositeRecordMapper; referenceMapper: ReferenceMapper } => {
     console.log(`Parsing ${lines.length} lines`);

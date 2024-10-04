@@ -1,24 +1,27 @@
-import { RecordIdReference } from '@type/level-1B/record-id';
-import { ReferenceAttribute } from '@type/level-1B/reference-attribute';
-import { CompositeAttribute } from '@type/level-3/composite-attribute';
+import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
+import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
+import { ReferenceAttribute } from '@type/level-3/reference-attribute';
 
-export class ReferenceMapper<RA extends ReferenceAttribute = ReferenceAttribute, CA extends CompositeAttribute = CompositeAttribute> {
-    private referencesByRecordId = new Map<RecordIdReference, CA[]>();
+export class ReferenceMapper<
+    RA extends ReferenceAttribute = ReferenceAttribute,
+    IHA extends IdentifiableHierarchicalAttribute = IdentifiableHierarchicalAttribute,
+> {
+    private attributesByCrossReferencePointer = new Map<CrossReferencePointer, IHA[]>();
 
-    public tryAdd(referenceAttribute: RA, ancestorReferenceAttribute: CA | undefined): void {
-        if (!ancestorReferenceAttribute) {
+    public tryAdd(referenceAttribute: RA, ancestor: IHA | undefined): void {
+        if (!ancestor) {
             return;
         }
         if (!referenceAttribute.value) {
             return;
         }
-        const recordIdReference = referenceAttribute.value;
-        const attributes = this.referencesByRecordId.get(recordIdReference) || [];
-        attributes.push(ancestorReferenceAttribute);
-        this.referencesByRecordId.set(recordIdReference, attributes);
+        const crossReferencePointer = referenceAttribute.value;
+        const attributes = this.attributesByCrossReferencePointer.get(crossReferencePointer) || [];
+        attributes.push(ancestor);
+        this.attributesByCrossReferencePointer.set(crossReferencePointer, attributes);
     }
 
-    public get(recordIdReference: RecordIdReference): CA[] | undefined {
-        return this.referencesByRecordId.get(recordIdReference);
+    public get(crossReferencePointer: CrossReferencePointer): IHA[] | undefined {
+        return this.attributesByCrossReferencePointer.get(crossReferencePointer);
     }
 }

@@ -6,7 +6,7 @@ export const RootTags = {
     ...RecordTags,
 } as const;
 
-export type RootTag = keyof typeof RootTags;
+export type RootTag = (typeof RootTags)[keyof typeof RootTags];
 
 const RootTagValues: string[] = Object.values(RootTags);
 

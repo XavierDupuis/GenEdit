@@ -1,5 +1,4 @@
-import { CompositeAttributeRecord } from '@type/level-4/composite-attribute-entry';
+import { Root } from '@type/level-4/root';
 import { DatasetTags } from '@type/tag/dataset-tag';
-import { RootTag } from '@type/tag/root-tag';
 
-export const HEADER: CompositeAttributeRecord<RootTag> = { tag: DatasetTags.HEAD, id: DatasetTags.HEAD, value: DatasetTags.HEAD, attributes: [] };
+export const HEADER: Root = { tag: DatasetTags.HEAD, id: DatasetTags.HEAD, value: null, parent: null, children: [] };

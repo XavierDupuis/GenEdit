@@ -8,7 +8,7 @@ export const RecordTags = {
     SUBM: 'SUBM',
 } as const;
 
-export type RecordTag = keyof typeof RecordTags;
+export type RecordTag = (typeof RecordTags)[keyof typeof RecordTags];
 
 const RecordTagValues: string[] = Object.values(RecordTags);
 

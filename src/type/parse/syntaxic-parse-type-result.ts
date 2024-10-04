@@ -1,4 +1,4 @@
-import { RecordId } from '@type/level-1B/record-id';
+import { CrossReference } from '@type/cross-reference/cross-reference';
 import { SuccessOrErrorResult } from '@type/success-or-error-result';
 import { AttributeTag } from '@type/tag/attribute-tag';
 import { DatasetTag } from '@type/tag/dataset-tag';
@@ -29,7 +29,7 @@ export interface RecordDeclarationSyntaxicParseData extends RootSyntaxicParseDat
     type: 'record';
     depth: 0;
     tag: RecordTag;
-    id: RecordId;
+    id: CrossReference;
 }
 
 export interface AttributeDeclarationSyntaxicParseData extends BaseSyntaxicParseData {

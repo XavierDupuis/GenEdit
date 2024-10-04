@@ -1,4 +1,4 @@
-import { Attributable } from '@type/level-1/attributable';
+import { Childable } from '@type/level-1/childable';
 import { Taggable } from '@type/level-1/taggable';
 
-export interface Composite extends Attributable, Taggable {}
+export interface Composite extends Childable, Taggable {}

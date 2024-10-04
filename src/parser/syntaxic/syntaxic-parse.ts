@@ -1,4 +1,4 @@
-import { isRecordId } from '@type/level-1B/record-id';
+import { isCrossReference } from '@type/cross-reference/cross-reference';
 import { SplitLineData } from '@type/parse/split-line-result';
 import { SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { isAttributeTag } from '@type/tag/attribute-tag';
@@ -15,7 +15,7 @@ export const syntaxicParseLine = ({ first, second, third }: SplitLineData): Synt
         if (second.at(0) === '@' && third) {
             const id = second.slice(1, -1);
             const tag = third;
-            if (isRecordId(id) && isRecordTag(tag)) {
+            if (isCrossReference(id) && isRecordTag(tag)) {
                 return {
                     success: true,
                     type: 'record',

@@ -1,6 +1,5 @@
-import { CompositeAttribute } from '@type/level-3/composite-attribute';
-import { CompositeAttributeRecord } from '@type/level-4/composite-attribute-entry';
+import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 
-export type SemanticParseTypeResult<I = string, V = string> =
-    | ({ handled: true } & (CompositeAttribute<V> | CompositeAttributeRecord<I, V>))
+export type SemanticParseTypeResult<I = string | null, V = string | null> =
+    | ({ handled: true } & IdentifiableHierarchicalAttribute<I, V>)
     | { handled: false };

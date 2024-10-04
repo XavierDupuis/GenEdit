@@ -134,7 +134,7 @@ export const StdAttributeTags = {
     ...RecordTags,
 } as const;
 
-export type StdAttributeTag = keyof typeof StdAttributeTags;
+export type StdAttributeTag = (typeof StdAttributeTags)[keyof typeof StdAttributeTags];
 
 const StdAttributeTagValues: string[] = Object.values(StdAttributeTags);
 

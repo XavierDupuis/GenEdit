@@ -1,32 +1,32 @@
-@for (compositeRecordList of compositeRecordListsList(); track $index) {
-    @for (compositeRecord of compositeRecordList; track compositeRecord.id) {
-        <h3 (click)="showReferences($event, compositeRecord.id)" id="@{{ compositeRecord.id }}@">{{ compositeRecord.id }}</h3>
-        <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: compositeRecord.attributes }"></ng-container>
+@for (hierarchicalListsListList of hierarchicalListsList(); track $index) {
+    @for (hierarchicalListsList of hierarchicalListsListList; track $index) {
+        <h3 (click)="showReferences($event, hierarchicalListsList.id)" id="@{{ hierarchicalListsList.id }}@">{{ hierarchicalListsList.id }}</h3>
+        <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: hierarchicalListsList.children }"></ng-container>
     }
 }
 
-<ng-template #attributesTemplate let-attributes="attributes">
-    @if (attributes.length > 0) {
+<ng-template #childrenTemplate let-children="children">
+    @if (children.length > 0) {
         <ul>
-            @for (attribute of attributes; track $index) {
+            @for (child of children; track $index) {
                 <li>
-                    <ng-container *ngTemplateOutlet="attributeTemplate; context: { attribute: attribute }"></ng-container>
+                    <ng-container *ngTemplateOutlet="childTemplate; context: { child: child }"></ng-container>
                 </li>
             }
         </ul>
     }
 </ng-template>
 
-<ng-template #attributeTemplate let-attribute="attribute">
-    <strong>{{ attribute.tag }}:</strong>
-    @if (isRecordReference(attribute.value)) {
-        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: attribute.value }"></ng-container>
-    } @else if (isExternalReference(attribute.value)) {
-        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: attribute.value }"></ng-container>
+<ng-template #childTemplate let-child="child">
+    <strong>{{ child.tag }}:</strong>
+    @if (isCrossReferencePointer(child.value)) {
+        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: child.value }"></ng-container>
+    } @else if (isExternalReference(child.value)) {
+        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: child.value }"></ng-container>
     } @else {
-        {{ attribute.value }}
+        {{ child.value }}
     }
-    <ng-container *ngTemplateOutlet="attributesTemplate; context: { attributes: attribute.attributes }"></ng-container>
+    <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: child.children }"></ng-container>
 </ng-template>
 
 <ng-template #internalReferenceTemplate let-internalReference="internalReference">
@@ -41,9 +41,9 @@
     <h3>References</h3>
     <ul>
         @for (reference of references(); track $index) {
-            @if (reference.value) {
+            @if (reference.id) {
                 <li>
-                    {{ reference.tag }}: <a href="#@{{ reference.value }}@" (click)="hideReferences()">{{ reference.value }}</a>
+                    {{ reference.tag }}: <a href="#@{{ reference.id }}@" (click)="hideReferences()">{{ reference.id }}</a>
                 </li>
             } @else {
                 <li>{{ reference.tag }}</li>

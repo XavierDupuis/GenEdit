@@ -1,18 +1,18 @@
-import { AttributableStacker } from '../util/attributable-stacker';
-import { ifAlreadyExistsPolicies, CompositeRecordMapper } from '../util/composite-record-mapper';
-import { SemanticParseLineHandler } from './sematic/semantic-parse';
+import { HierarchicalStacker } from '../util/hierarchical-stacker';
+import { ifAlreadyExistsPolicies, RootMapper } from '../util/root-mapper';
+import { SemanticParseLineHandler } from './semantic/semantic-parse';
 import { ReferenceMapper } from '@util/reference-mapper';
-import { CompositeAttribute } from '@type/level-3/composite-attribute';
 import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { syntaxicParseLine } from './syntaxic/syntaxic-parse';
 import { SplitLineData, SplitLineResult } from '@type/parse/split-line-result';
 import { splitLine } from './structural/split-line';
+import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 
-export const parse = (lines: string[]): { compositeRecordMapper: CompositeRecordMapper; referenceMapper: ReferenceMapper } => {
+export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMapper: ReferenceMapper } => {
     console.log(`Parsing ${lines.length} lines`);
 
-    const attributableStacker = new AttributableStacker<CompositeAttribute<string>>();
-    const compositeRecordMapper = new CompositeRecordMapper(ifAlreadyExistsPolicies.OVERWRITE);
+    const hierarchicalStacker = new HierarchicalStacker<IdentifiableHierarchicalAttribute>();
+    const rootMapper = new RootMapper(ifAlreadyExistsPolicies.OVERWRITE);
     const referenceMapper = new ReferenceMapper();
     const semanticParseLineHandler = new SemanticParseLineHandler();
 
@@ -37,7 +37,7 @@ export const parse = (lines: string[]): { compositeRecordMapper: CompositeRecord
             continue;
         }
 
-        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, attributableStacker, referenceMapper, compositeRecordMapper);
+        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, hierarchicalStacker, referenceMapper, rootMapper);
         if (parsed) {
             lastKnownDepth = syntaxicParseResult.depth;
         } else {
@@ -46,7 +46,7 @@ export const parse = (lines: string[]): { compositeRecordMapper: CompositeRecord
         wasLastLineSkipped = !parsed;
     }
 
-    return { compositeRecordMapper, referenceMapper };
+    return { rootMapper, referenceMapper };
 };
 
 const getSplitLineResults = (lines: string[]): SplitLineResult[] => {

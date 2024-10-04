@@ -3,7 +3,7 @@ export const DatasetTags = {
     TRLR: 'TRLR',
 } as const;
 
-export type DatasetTag = keyof typeof DatasetTags;
+export type DatasetTag = (typeof DatasetTags)[keyof typeof DatasetTags];
 
 const DatasetTagValues: string[] = Object.values(DatasetTags);
 

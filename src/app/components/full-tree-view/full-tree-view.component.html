@@ -39,16 +39,20 @@
 
 <div class="popup" *ngIf="isReferencePopupVisible()" [ngStyle]="{ top: popupPosition()?.y + 'px', left: popupPosition()?.x + 'px' }">
     <h3>References</h3>
-    <ul>
-        @for (reference of references(); track $index) {
-            @if (reference.id) {
-                <li>
-                    {{ reference.tag }}: <a href="#@{{ reference.id }}@" (click)="hideReferences()">{{ reference.id }}</a>
-                </li>
-            } @else {
-                <li>{{ reference.tag }}</li>
+    @if (references().length > 0) {
+        <ul>
+            @for (reference of references(); track $index) {
+                @if (reference.id) {
+                    <li>
+                        {{ reference.tag }}: <a href="#@{{ reference.id }}@" (click)="hideReferences()">{{ reference.id }}</a>
+                    </li>
+                } @else {
+                    <li>{{ reference.tag }}</li>
+                }
             }
-        }
-    </ul>
+        </ul>
+    } @else {
+        <p>No references found.</p>
+    }
     <button (click)="hideReferences()">Close</button>
 </div>

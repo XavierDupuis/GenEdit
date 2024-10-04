@@ -32,14 +32,11 @@ export class FullTreeViewComponent {
         return value?.startsWith(EXTERNAL_REFERENCE_START);
     }
 
-    protected showReferences(event: MouseEvent, value: string | null): void {
-        if (!value) {
+    protected showReferences(event: MouseEvent, crossReference: string | null): void {
+        if (!crossReference) {
             return;
         }
-        const references = this.getReferences(value);
-        if (references.length === 0) {
-            return;
-        }
+        const references = this.getReferences(crossReference);
         this.references.set(references);
         const target = event.currentTarget as HTMLElement;
         const rect = target.getBoundingClientRect();

@@ -4,6 +4,7 @@ import { RecordTags } from '@type/tag/record-tag';
 export const StdAttributeTags = {
     ABBR: 'ABBR',
     ADDR: 'ADDR',
+    ADOP: 'ADOP',
     ADR1: 'ADR1',
     ADR2: 'ADR2',
     ADR3: 'ADR3',
@@ -48,6 +49,7 @@ export const StdAttributeTags = {
     DIV: 'DIV',
     DSCR: 'DSCR',
     EDUC: 'EDUC',
+    EMAIL: 'EMAIL',
     EMIG: 'EMIG',
     ENDL: 'ENDL',
     ENGA: 'ENGA',

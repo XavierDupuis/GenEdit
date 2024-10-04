@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
 import {
-    CrossReference,
     isCrossReference,
     isCrossReferencePointer as stdIsCrossReferencePointer,
     toCrossReferencePointer as stdToCrossReferencePointer,
@@ -9,6 +8,7 @@ import {
 import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 import { Reference } from '@type/level-5/reference';
 import { ReferenceMapper } from '@util/reference-mapper';
+import { getFriendlyTag as stdGetFriendlyTag } from '../../../resources/friendly-tag';
 
 const EXTERNAL_REFERENCE_START = 'http';
 
@@ -28,6 +28,7 @@ export class FullTreeViewComponent {
 
     protected isCrossReferencePointer = stdIsCrossReferencePointer;
     protected toCrossReferencePointer = stdToCrossReferencePointer;
+    protected getFriendlyTag = stdGetFriendlyTag;
 
     protected isExternalReference(value?: string) {
         return value?.startsWith(EXTERNAL_REFERENCE_START);

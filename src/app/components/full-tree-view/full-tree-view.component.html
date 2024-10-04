@@ -11,11 +11,12 @@
 
 <ng-template #rootTemplate let-root="root" let-isCrossReference="isCrossReference">
     @if (isCrossReference) {
-        <h3 (click)="showReferences($event, root.id)" id="@{{ root.id }}@">{{ root.id }}</h3>
+        <h3 (click)="showReferences($event, root.id)" id="@{{ root.id }}@">
+            {{ root.id }}
+        </h3>
     } @else {
         <strong>
-            <ng-container
-                *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: toCrossReferencePointer(root.id) }"></ng-container>
+            <ng-container *ngTemplateOutlet="crossReferenceTemplate; context: { crossReference: toCrossReferencePointer(root.id) }"></ng-container>
         </strong>
     }
 </ng-template>
@@ -38,22 +39,30 @@
 </ng-template>
 
 <ng-template #attributeTemplate let-tag="tag" let-value="value">
-    <strong>{{ tag }}:</strong>
+    <ng-container *ngTemplateOutlet="tagTemplate; context: { tag: tag }"></ng-container>
     <ng-container *ngTemplateOutlet="valueTemplate; context: { value: value }"></ng-container>
 </ng-template>
 
-<ng-template #valueTemplate let-value="value">
-    @if (isCrossReferencePointer(value)) {
-        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: value }"></ng-container>
-    } @else if (isExternalReference(value)) {
-        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: value }"></ng-container>
-    } @else {
-        {{ value }}
-    }
+<ng-template #tagTemplate let-tag="tag">
+    <span>
+        <strong>{{ getFriendlyTag(tag) }}</strong>
+    </span>
 </ng-template>
 
-<ng-template #internalReferenceTemplate let-internalReference="internalReference">
-    <a href="#{{ internalReference }}">{{ internalReference }}</a>
+<ng-template #valueTemplate let-value="value">
+    <span>
+        @if (isCrossReferencePointer(value)) {
+            <ng-container *ngTemplateOutlet="crossReferenceTemplate; context: { crossReference: value }"></ng-container>
+        } @else if (isExternalReference(value)) {
+            <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: value }"></ng-container>
+        } @else {
+            {{ value }}
+        }
+    </span>
+</ng-template>
+
+<ng-template #crossReferenceTemplate let-crossReference="crossReference">
+    <a href="#{{ crossReference }}">{{ crossReference }}</a>
 </ng-template>
 
 <ng-template #externalReferenceTemplate let-externalReference="externalReference">

@@ -5,10 +5,10 @@ import { DatasetSemanticParseTypeHandler } from './dataset-semantic-parse-type-h
 import { RecordSemanticParseTypeHandler } from './record-semantic-parse-type-handler';
 import { SemanticParseTypeHandler } from './semantic-parse-type-handler';
 import { HierarchicalStacker } from '@util/hierarchical-stacker';
-import { isReferenceAttribute } from '@type/level-3/reference-attribute';
 import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 import { isRoot } from '@type/level-4/root';
 import { RootMapper } from '@util/root-mapper';
+import { isReference } from '@type/level-5/reference';
 
 export class SemanticParseLineHandler {
     private parseTypeHandlers: SemanticParseTypeHandler[] = [
@@ -27,15 +27,15 @@ export class SemanticParseLineHandler {
             const result = handler.handle(syntaxicParseData);
             if (result.handled) {
                 const { handled: _, ...data } = result;
-                // Required : push the attributable to the stack
+                // Required : push the hierarchical to the HierarchicalStacker
                 hierarchicalStacker.push(data, syntaxicParseData.depth);
-                // Optional : add the composite entry to the CompositeRecordMapper
+                // Optional : add the root to the RootMapper
                 if (isRoot(data)) {
                     rootMapper.add(data);
                 }
-                // Optional : add the ReferenceAttribute to the ReferenceMapper
-                if (isReferenceAttribute(data)) {
-                    referenceMapper.tryAdd(data, hierarchicalStacker.first);
+                // Optional : add the reference to the ReferenceMapper
+                if (isReference(data)) {
+                    referenceMapper.tryAdd(data);
                 }
                 return true;
             }

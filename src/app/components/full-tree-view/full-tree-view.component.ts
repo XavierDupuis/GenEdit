@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
 import {
+    CrossReference,
     isCrossReference,
     isCrossReferencePointer as stdIsCrossReferencePointer,
-    toCrossReferencePointer,
+    toCrossReferencePointer as stdToCrossReferencePointer,
 } from '@type/cross-reference/cross-reference';
 import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
+import { Reference } from '@type/level-5/reference';
 import { ReferenceMapper } from '@util/reference-mapper';
 
 const EXTERNAL_REFERENCE_START = 'http';
@@ -22,11 +24,10 @@ export class FullTreeViewComponent {
     public referenceMapper = input<ReferenceMapper>();
     protected isReferencePopupVisible = signal(false);
     protected popupPosition = signal<{ x: number; y: number } | null>(null);
-    protected references = signal<IdentifiableHierarchicalAttribute[]>([]);
+    protected references = signal<Reference[]>([]);
 
-    protected isCrossReferencePointer(value?: string) {
-        return stdIsCrossReferencePointer(value);
-    }
+    protected isCrossReferencePointer = stdIsCrossReferencePointer;
+    protected toCrossReferencePointer = stdToCrossReferencePointer;
 
     protected isExternalReference(value?: string) {
         return value?.startsWith(EXTERNAL_REFERENCE_START);
@@ -52,14 +53,14 @@ export class FullTreeViewComponent {
         this.references.set([]);
     }
 
-    private getReferences(value?: string): IdentifiableHierarchicalAttribute[] {
+    private getReferences(value?: string): Reference[] {
         if (!value) {
             return [];
         }
         if (!isCrossReference(value)) {
             return [];
         }
-        const crossReferencePointer = toCrossReferencePointer(value);
+        const crossReferencePointer = this.toCrossReferencePointer(value);
         return this.referenceMapper()?.get(crossReferencePointer) || [];
     }
 }

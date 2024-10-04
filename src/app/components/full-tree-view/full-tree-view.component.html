@@ -1,32 +1,55 @@
-@for (hierarchicalListsListList of hierarchicalListsList(); track $index) {
-    @for (hierarchicalListsList of hierarchicalListsListList; track $index) {
-        <h3 (click)="showReferences($event, hierarchicalListsList.id)" id="@{{ hierarchicalListsList.id }}@">{{ hierarchicalListsList.id }}</h3>
-        <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: hierarchicalListsList.children }"></ng-container>
+@for (hierarchicalList of hierarchicalListsList(); track $index) {
+    @for (root of hierarchicalList; track $index) {
+        <ng-container *ngTemplateOutlet="rootAndChildrenTemplate; context: { root: root }"></ng-container>
     }
 }
 
-<ng-template #childrenTemplate let-children="children">
-    @if (children.length > 0) {
-        <ul>
-            @for (child of children; track $index) {
-                <li>
-                    <ng-container *ngTemplateOutlet="childTemplate; context: { child: child }"></ng-container>
-                </li>
-            }
-        </ul>
+<ng-template #rootAndChildrenTemplate let-root="root">
+    <ng-container *ngTemplateOutlet="rootTemplate; context: { root: root, isCrossReference: true }"></ng-container>
+    <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: root.children }"></ng-container>
+</ng-template>
+
+<ng-template #rootTemplate let-root="root" let-isCrossReference="isCrossReference">
+    @if (isCrossReference) {
+        <h3 (click)="showReferences($event, root.id)" id="@{{ root.id }}@">{{ root.id }}</h3>
+    } @else {
+        <strong>
+            <ng-container
+                *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: toCrossReferencePointer(root.id) }"></ng-container>
+        </strong>
     }
 </ng-template>
 
+<ng-template #childrenTemplate let-children="children">
+    <ul>
+        @for (child of children; track $index) {
+            <li>
+                <ng-container *ngTemplateOutlet="childTemplate; context: { child: child }"></ng-container>
+            </li>
+        }
+    </ul>
+</ng-template>
+
 <ng-template #childTemplate let-child="child">
-    <strong>{{ child.tag }}:</strong>
-    @if (isCrossReferencePointer(child.value)) {
-        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: child.value }"></ng-container>
-    } @else if (isExternalReference(child.value)) {
-        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: child.value }"></ng-container>
-    } @else {
-        {{ child.value }}
+    <ng-container *ngTemplateOutlet="attributeTemplate; context: { tag: child.tag, value: child.value }"></ng-container>
+    @if (child.children.length > 0) {
+        <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: child.children }"></ng-container>
     }
-    <ng-container *ngTemplateOutlet="childrenTemplate; context: { children: child.children }"></ng-container>
+</ng-template>
+
+<ng-template #attributeTemplate let-tag="tag" let-value="value">
+    <strong>{{ tag }}:</strong>
+    <ng-container *ngTemplateOutlet="valueTemplate; context: { value: value }"></ng-container>
+</ng-template>
+
+<ng-template #valueTemplate let-value="value">
+    @if (isCrossReferencePointer(value)) {
+        <ng-container *ngTemplateOutlet="internalReferenceTemplate; context: { internalReference: value }"></ng-container>
+    } @else if (isExternalReference(value)) {
+        <ng-container *ngTemplateOutlet="externalReferenceTemplate; context: { externalReference: value }"></ng-container>
+    } @else {
+        {{ value }}
+    }
 </ng-template>
 
 <ng-template #internalReferenceTemplate let-internalReference="internalReference">
@@ -42,13 +65,7 @@
     @if (references().length > 0) {
         <ul>
             @for (reference of references(); track $index) {
-                @if (reference.id) {
-                    <li>
-                        {{ reference.tag }}: <a href="#@{{ reference.id }}@" (click)="hideReferences()">{{ reference.id }}</a>
-                    </li>
-                } @else {
-                    <li>{{ reference.tag }}</li>
-                }
+                <ng-container *ngTemplateOutlet="parentTemplate; context: { parent: reference }"></ng-container>
             }
         </ul>
     } @else {
@@ -56,3 +73,16 @@
     }
     <button (click)="hideReferences()">Close</button>
 </div>
+
+<ng-template #parentTemplate let-parent="parent">
+    @if (parent.parent) {
+        <ng-container *ngTemplateOutlet="parentTemplate; context: { parent: parent.parent }"></ng-container>
+        <ul>
+            <li>
+                <ng-container *ngTemplateOutlet="attributeTemplate; context: { tag: parent.tag, value: parent.value }"></ng-container>
+            </li>
+        </ul>
+    } @else {
+        <ng-container *ngTemplateOutlet="rootTemplate; context: { root: parent, isCrossReference: false }"></ng-container>
+    }
+</ng-template>

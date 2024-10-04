@@ -1,11 +1,18 @@
-import { RecordTag } from '@type/tag/record-tag';
 import { Attribute } from '@type/level-2/attribute';
 import { CrossReferencePointer, isCrossReferencePointer } from '@type/cross-reference/cross-reference';
+import { AttributeTag, isAttributeTag } from '@type/tag/attribute-tag';
 
 export interface ReferenceAttribute extends Attribute<CrossReferencePointer> {
-    tag: RecordTag;
+    tag: AttributeTag;
 }
 
 export const isReferenceAttribute = (value: unknown): value is ReferenceAttribute => {
-    return typeof value === 'object' && value !== null && 'value' in value && typeof value.value === 'string' && isCrossReferencePointer(value.value);
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'tag' in value &&
+        isAttributeTag(value.tag) &&
+        'value' in value &&
+        isCrossReferencePointer(value.value)
+    );
 };

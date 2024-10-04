@@ -65,7 +65,9 @@
     @if (references().length > 0) {
         <ul>
             @for (reference of references(); track $index) {
-                <ng-container *ngTemplateOutlet="parentTemplate; context: { parent: reference }"></ng-container>
+                <li>
+                    <ng-container *ngTemplateOutlet="parentTemplate; context: { parent: reference }"></ng-container>
+                </li>
             }
         </ul>
     } @else {

@@ -1,5 +1,5 @@
-@for (hierarchicalList of hierarchicalListsList(); track $index) {
-    @for (root of hierarchicalList; track $index) {
+@for (rootsList of roots$ | async; track $index) {
+    @for (root of rootsList; track $index) {
         <ng-container *ngTemplateOutlet="rootAndChildrenTemplate; context: { root: root }"></ng-container>
     }
 }

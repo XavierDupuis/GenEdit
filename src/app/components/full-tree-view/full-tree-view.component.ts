@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
     isCrossReference,
     isCrossReferencePointer as stdIsCrossReferencePointer,
     toCrossReferencePointer as stdToCrossReferencePointer,
 } from '@type/cross-reference/cross-reference';
-import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 import { Reference } from '@type/level-5/reference';
-import { ReferenceMapper } from '@util/reference-mapper';
 import { getFriendlyTag as stdGetFriendlyTag } from '../../../resources/friendly-tag';
+import { TreeState } from '@app/states/tree.state';
+import { Store } from '@ngxs/store';
 
 const EXTERNAL_REFERENCE_START = 'http';
 
@@ -20,8 +20,6 @@ const EXTERNAL_REFERENCE_START = 'http';
     styleUrl: './full-tree-view.component.scss',
 })
 export class FullTreeViewComponent {
-    public hierarchicalListsList = input.required<IdentifiableHierarchicalAttribute[][]>();
-    public referenceMapper = input<ReferenceMapper>();
     protected isReferencePopupVisible = signal(false);
     protected popupPosition = signal<{ x: number; y: number } | null>(null);
     protected references = signal<Reference[]>([]);
@@ -29,6 +27,9 @@ export class FullTreeViewComponent {
     protected isCrossReferencePointer = stdIsCrossReferencePointer;
     protected toCrossReferencePointer = stdToCrossReferencePointer;
     protected getFriendlyTag = stdGetFriendlyTag;
+
+    private store = inject(Store);
+    protected roots$ = this.store.select(TreeState.getRoots);
 
     protected isExternalReference(value?: string) {
         return value?.startsWith(EXTERNAL_REFERENCE_START);
@@ -62,6 +63,6 @@ export class FullTreeViewComponent {
             return [];
         }
         const crossReferencePointer = this.toCrossReferencePointer(value);
-        return this.referenceMapper()?.get(crossReferencePointer) || [];
+        return this.store.selectSnapshot(TreeState.getReferences).get(crossReferencePointer) || [];
     }
 }

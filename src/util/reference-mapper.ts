@@ -17,4 +17,8 @@ export class ReferenceMapper<R extends Reference = Reference> {
     public get(crossReferencePointer: CrossReferencePointer): Reference[] | undefined {
         return this.attributesByCrossReferencePointer.get(crossReferencePointer);
     }
+
+    public getMap(): Map<CrossReferencePointer, R[]> {
+        return this.attributesByCrossReferencePointer;
+    }
 }

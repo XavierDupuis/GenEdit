@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ImporterService } from '@app/services/importer.service';
+import { take, tap } from 'rxjs';
 
 @Component({
     selector: 'app-file-selector',
@@ -9,24 +12,44 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileSelectorComponent {
-    protected selectedFile: File | null = null;
+    private destroyRef = inject(DestroyRef);
+    private importerService = inject(ImporterService);
+
     protected isProcessing = signal(false);
-    public fileContentChanged = output<string>();
 
-    protected onFileSelected(event: any /* TODO */): void {
+    protected onFileSelected(event: Event): void {
         this.isProcessing.set(true);
-        const file = event.target.files[0];
-        this.selectedFile = file;
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = this.onFileLoaded;
-            reader.readAsText(file); // Reading the file as text
+        const file = this.getFileFromEvent(event);
+        if (!file) {
+            this.isProcessing.set(false);
+            return;
         }
+
+        this.importerService
+            .importFile(file)
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.isProcessing.set(false));
     }
 
-    private onFileLoaded = (e: any /* TODO */): void => {
-        this.fileContentChanged.emit(e.target.result);
-        this.isProcessing.set(false);
-    };
+    private getFileFromEvent(event: Event): File | null {
+        const hasTarget = 'target' in event && event.target !== null;
+        if (!hasTarget) {
+            return null;
+        }
+        const target = event.target;
+        const hasFiles = 'files' in target && target.files !== null;
+        if (!hasFiles) {
+            return null;
+        }
+        const files = target.files;
+        const hasFile = files instanceof FileList && files.length > 0;
+        if (!hasFile) {
+            return null;
+        }
+        const file = files[0];
+        if (!(file instanceof File)) {
+            return null;
+        }
+        return file;
+    }
 }

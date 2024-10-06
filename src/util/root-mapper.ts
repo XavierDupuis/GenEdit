@@ -1,5 +1,5 @@
 import { Root } from '@type/level-4/root';
-import { Tag } from '@type/tag/tag';
+import { RootTag } from '@type/tag/root-tag';
 
 export const ifAlreadyExistsPolicies = {
     OVERWRITE: 'OVERWRITE',
@@ -9,12 +9,12 @@ export const ifAlreadyExistsPolicies = {
 export type ifAlreadyExistsPolicy = keyof typeof ifAlreadyExistsPolicies;
 
 export class RootMapper<I extends string = string, T extends Root<I> = Root<I>> {
-    private elementByIdByTag = new Map<Tag, Map<string, T>>();
+    private elementByIdByTag = new Map<RootTag, Map<I, T>>();
 
     constructor(private ifAlreadyExistsPolicy: ifAlreadyExistsPolicy) {}
 
     public add(element: T): void {
-        const elementById = this.elementByIdByTag.get(element.tag) || new Map<string, T>();
+        const elementById = this.elementByIdByTag.get(element.tag) || new Map<I, T>();
         const isAlreadyExists = elementById.has(element.id);
         if (isAlreadyExists && this.ifAlreadyExistsPolicy === ifAlreadyExistsPolicies.IGNORE) {
             return;
@@ -23,7 +23,7 @@ export class RootMapper<I extends string = string, T extends Root<I> = Root<I>> 
         this.elementByIdByTag.set(element.tag, elementById);
     }
 
-    public get(tag: Tag, id: string): T | undefined {
+    public get(tag: RootTag, id: I): T | undefined {
         const elementById = this.elementByIdByTag.get(tag);
         if (!elementById) {
             return undefined;
@@ -33,5 +33,9 @@ export class RootMapper<I extends string = string, T extends Root<I> = Root<I>> 
 
     public toArray(): T[][] {
         return Array.from(this.elementByIdByTag.values()).map(elementById => Array.from(elementById.values()));
+    }
+
+    public getMap(): Map<RootTag, Map<I, T>> {
+        return this.elementByIdByTag;
     }
 }

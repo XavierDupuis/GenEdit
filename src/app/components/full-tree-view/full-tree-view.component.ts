@@ -5,6 +5,9 @@ import { Reference } from '@type/level-5/reference';
 import { getFriendlyTag as stdGetFriendlyTag } from '../../../resources/friendly-tag';
 import { TreeState } from '@app/states/tree.state';
 import { Store } from '@ngxs/store';
+import { RootTag } from '@type/tag/root-tag';
+import { map, OperatorFunction } from 'rxjs';
+import { Root } from '@type/level-4/root';
 
 const EXTERNAL_REFERENCE_START = 'http';
 
@@ -24,7 +27,12 @@ export class FullTreeViewComponent {
     protected getFriendlyTag = stdGetFriendlyTag;
 
     private store = inject(Store);
-    protected roots$ = this.store.select(TreeState.getRoots);
+
+    private rootsToArray = (roots: Map<RootTag, Map<string, Root>>): Root[][] => {
+        return Array.from(roots.values()).map(root => Array.from(root.values()));
+    };
+
+    protected roots$ = this.store.select(TreeState.getRoots).pipe(map(this.rootsToArray));
 
     protected isExternalReference(value?: string) {
         return value?.startsWith(EXTERNAL_REFERENCE_START);

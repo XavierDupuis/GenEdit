@@ -1,4 +1,4 @@
-import { isCrossReference } from '@type/cross-reference/cross-reference';
+import { isCrossReferencePointer } from '@type/cross-reference/cross-reference';
 import { SplitLineData } from '@type/parse/split-line-result';
 import { SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { isAttributeTag } from '@type/tag/attribute-tag';
@@ -13,9 +13,9 @@ export const syntaxicParseLine = ({ first, second, third }: SplitLineData): Synt
 
     if (depth === 0) {
         if (second.at(0) === '@' && third) {
-            const id = second.slice(1, -1);
+            const id = second;
             const tag = third;
-            if (isCrossReference(id) && isRecordTag(tag)) {
+            if (isCrossReferencePointer(id) && isRecordTag(tag)) {
                 return {
                     success: true,
                     type: 'record',

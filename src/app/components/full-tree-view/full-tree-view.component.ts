@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import {
-    isCrossReference,
-    isCrossReferencePointer as stdIsCrossReferencePointer,
-    toCrossReferencePointer as stdToCrossReferencePointer,
-} from '@type/cross-reference/cross-reference';
+import { isCrossReferencePointer as stdIsCrossReferencePointer } from '@type/cross-reference/cross-reference';
 import { Reference } from '@type/level-5/reference';
 import { getFriendlyTag as stdGetFriendlyTag } from '../../../resources/friendly-tag';
 import { TreeState } from '@app/states/tree.state';
@@ -25,7 +21,6 @@ export class FullTreeViewComponent {
     protected references = signal<Reference[]>([]);
 
     protected isCrossReferencePointer = stdIsCrossReferencePointer;
-    protected toCrossReferencePointer = stdToCrossReferencePointer;
     protected getFriendlyTag = stdGetFriendlyTag;
 
     private store = inject(Store);
@@ -59,10 +54,9 @@ export class FullTreeViewComponent {
         if (!value) {
             return [];
         }
-        if (!isCrossReference(value)) {
+        if (!this.isCrossReferencePointer(value)) {
             return [];
         }
-        const crossReferencePointer = this.toCrossReferencePointer(value);
-        return this.store.selectSnapshot(TreeState.getReferences).get(crossReferencePointer) || [];
+        return this.store.selectSnapshot(TreeState.getReferences).get(value) || [];
     }
 }

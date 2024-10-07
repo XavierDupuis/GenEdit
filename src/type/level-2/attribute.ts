@@ -1,4 +1,6 @@
-import { Taggable } from '@type/level-1/taggable';
-import { Valuable } from '@type/level-1/valuable';
+import { BaseEntry } from '@type/level-2/entry';
+import { AttributeTag } from '@type/tag/attribute-tag';
 
-export interface Attribute<V = string> extends Taggable, Valuable<V> {}
+export interface Attribute<V extends string | null> extends BaseEntry<V, null, string> {
+    tag: AttributeTag;
+}

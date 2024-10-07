@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { isCrossReferencePointer as stdIsCrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { Reference } from '@type/level-5/reference';
+import { CrossReferencePointer, isCrossReferencePointer as stdIsCrossReferencePointer } from '@type/cross-reference/cross-reference';
 import { getFriendlyTag as stdGetFriendlyTag } from '../../../resources/friendly-tag';
 import { TreeState } from '@app/states/tree.state';
 import { Store } from '@ngxs/store';
-import { RootTag } from '@type/tag/root-tag';
-import { map, OperatorFunction } from 'rxjs';
-import { Root } from '@type/level-4/root';
+import { map } from 'rxjs';
+import { RootMap } from '@util/root-mapper';
+import { Reference } from '@type/level-3/reference';
+import { Root } from '@type/level-2/root';
 
 const EXTERNAL_REFERENCE_START = 'http';
 
@@ -28,7 +28,7 @@ export class FullTreeViewComponent {
 
     private store = inject(Store);
 
-    private rootsToArray = (roots: Map<RootTag, Map<string, Root>>): Root[][] => {
+    private rootsToArray = (roots: RootMap): Root<CrossReferencePointer | null>[][] => {
         return Array.from(roots.values()).map(root => Array.from(root.values()));
     };
 

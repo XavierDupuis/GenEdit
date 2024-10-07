@@ -1,9 +1,9 @@
-import { Hierarchical } from '@type/level-2/hierarchical';
+import { Entry } from '@type/level-2/entry';
 
-export class HierarchicalStacker<H extends Hierarchical /*<H>*/> {
-    private stack: H[] = [];
+export class EntryStacker<E extends Entry = Entry> {
+    private stack: E[] = [];
 
-    public push(item: H, depth: number) {
+    public push(item: E, depth: number) {
         this.goto(depth);
         if (depth === 0) {
             this.stack.push(item);
@@ -23,11 +23,11 @@ export class HierarchicalStacker<H extends Hierarchical /*<H>*/> {
         this.stack = this.stack.slice(0, depth);
     }
 
-    public get last(): H | undefined {
+    public get last(): E | undefined {
         return this.stack.at(-1);
     }
 
-    public get first(): H | undefined {
+    public get first(): E | undefined {
         return this.stack.at(0);
     }
 }

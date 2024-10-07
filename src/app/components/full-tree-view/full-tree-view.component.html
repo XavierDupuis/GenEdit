@@ -11,12 +11,18 @@
 
 <ng-template #rootTemplate let-root="root" let-isCrossReference="isCrossReference">
     @if (isCrossReference) {
-        <h3 (click)="showReferences($event, root.id)" [id]="root.id">
-            {{ root.id }}
-        </h3>
+        @if (root.xref) {
+            <h3 (click)="showReferences($event, root.xref)" [id]="root.xref">
+                {{ root.xref ?? root.tag }}
+            </h3>
+        } @else {
+            <h3>
+                {{ root.tag }}
+            </h3>
+        }
     } @else {
         <strong>
-            <ng-container *ngTemplateOutlet="crossReferenceTemplate; context: { crossReference: root.id }"></ng-container>
+            <ng-container *ngTemplateOutlet="crossReferenceTemplate; context: { crossReference: root.xref ?? root.tag }"></ng-container>
         </strong>
     }
 </ng-template>

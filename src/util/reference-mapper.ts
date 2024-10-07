@@ -1,5 +1,7 @@
 import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { Reference } from '@type/level-5/reference';
+import { Reference } from '@type/level-3/reference';
+
+export type ReferenceMap<R extends Reference = Reference> = Map<CrossReferencePointer, R[]>;
 
 export class ReferenceMapper<R extends Reference = Reference> {
     private attributesByCrossReferencePointer = new Map<CrossReferencePointer, R[]>();
@@ -18,7 +20,7 @@ export class ReferenceMapper<R extends Reference = Reference> {
         return this.attributesByCrossReferencePointer.get(crossReferencePointer);
     }
 
-    public getMap(): Map<CrossReferencePointer, R[]> {
+    public getMap(): ReferenceMap<R> {
         return this.attributesByCrossReferencePointer;
     }
 }

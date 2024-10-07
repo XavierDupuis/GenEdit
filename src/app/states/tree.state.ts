@@ -1,15 +1,13 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { Taggable } from '@type/level-1/taggable';
-import { Valuable } from '@type/level-1/valuable';
-import { Root } from '@type/level-4/root';
-import { Reference } from '@type/level-5/reference';
-import { RootTag, RootTags } from '@type/tag/root-tag';
+import { Entry } from '@type/level-2/entry';
+import { RootTags } from '@type/tag/root-tag';
 import { StdAttributeTags } from '@type/tag/std-attribute-tag';
+import { ReferenceMap } from '@util/reference-mapper';
+import { RootMap } from '@util/root-mapper';
 
 interface TreeStateModel {
-    roots: Map<RootTag, Map<string, Root>>;
-    references: Map<CrossReferencePointer, Reference[]>;
+    roots: RootMap;
+    references: ReferenceMap;
 }
 
 const TreeStateModelDefault: TreeStateModel = {
@@ -19,12 +17,12 @@ const TreeStateModelDefault: TreeStateModel = {
 
 export class SetRoots {
     static readonly type = '[TreeState] SetRoots';
-    constructor(public roots: Map<RootTag, Map<string, Root>>) {}
+    constructor(public roots: RootMap) {}
 }
 
 export class SetReferences {
     static readonly type = '[TreeState] SetReferences';
-    constructor(public references: Map<CrossReferencePointer, Reference[]>) {}
+    constructor(public references: ReferenceMap) {}
 }
 
 @State<TreeStateModel>({
@@ -33,15 +31,12 @@ export class SetReferences {
 })
 export class TreeState {
     @Action(SetRoots)
-    public setRoots({ patchState }: StateContext<TreeStateModel>, { roots }: { roots: Map<RootTag, Map<string, Root>> }): void {
+    public setRoots({ patchState }: StateContext<TreeStateModel>, { roots }: { roots: RootMap }): void {
         patchState({ roots });
     }
 
     @Action(SetReferences)
-    public setReferences(
-        { patchState }: StateContext<TreeStateModel>,
-        { references }: { references: Map<CrossReferencePointer, Reference[]> }
-    ): void {
+    public setReferences({ patchState }: StateContext<TreeStateModel>, { references }: { references: ReferenceMap }): void {
         patchState({ references });
     }
 
@@ -53,5 +48,16 @@ export class TreeState {
     @Selector()
     public static getReferences(state: TreeStateModel): TreeStateModel['references'] {
         return state.references;
+    }
+
+    @Selector()
+    public static getFilename(state: TreeStateModel): string | null {
+        const attribute = state.roots
+            .get(RootTags.HEAD)
+            ?.get(RootTags.HEAD)
+            ?.children.find(
+                (child): child is Entry => typeof child === 'object' && child !== null && 'tag' in child && child.tag === StdAttributeTags.FILE
+            );
+        return attribute?.value ?? null;
     }
 }

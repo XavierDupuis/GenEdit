@@ -1,3 +1,3 @@
-export interface Childable {
-    children: Childable[];
+export interface Childable<C> {
+    children: C[];
 }

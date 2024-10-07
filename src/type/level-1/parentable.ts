@@ -1,3 +1,3 @@
-export interface Parentable /*<P = unknown>*/ {
-    parent: unknown /*P | null*/;
+export interface Parentable<P> {
+    parent: P;
 }

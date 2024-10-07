@@ -1,4 +1,6 @@
-import { Root } from '@type/level-4/root';
+import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
+import { Root } from '@type/level-2/root';
+import { DatasetTag, isDatasetTag } from '@type/tag/dataset-tag';
 import { RootTag } from '@type/tag/root-tag';
 
 export const ifAlreadyExistsPolicies = {
@@ -8,34 +10,46 @@ export const ifAlreadyExistsPolicies = {
 
 export type ifAlreadyExistsPolicy = keyof typeof ifAlreadyExistsPolicies;
 
-export class RootMapper<I extends string = string, T extends Root<I> = Root<I>> {
-    private elementByIdByTag = new Map<RootTag, Map<I, T>>();
+export type RootMap<X extends CrossReferencePointer | null = CrossReferencePointer | null, R extends Root<X> = Root<X>> = Map<
+    RootTag,
+    Map<X | DatasetTag, R>
+>;
+
+export class RootMapper<X extends CrossReferencePointer | null = CrossReferencePointer | null, R extends Root<X> = Root<X>> {
+    private elementByRefByTag: RootMap<X, R> = new Map<RootTag, Map<X | DatasetTag, R>>();
 
     constructor(private ifAlreadyExistsPolicy: ifAlreadyExistsPolicy) {}
 
-    public add(element: T): void {
-        const elementById = this.elementByIdByTag.get(element.tag) || new Map<I, T>();
-        const isAlreadyExists = elementById.has(element.id);
+    public add(root: R): void {
+        const elementByRef = this.elementByRefByTag.get(root.tag) || new Map<X | DatasetTag, R>();
+        const isAlreadyExists = elementByRef.has(root.xref);
         if (isAlreadyExists && this.ifAlreadyExistsPolicy === ifAlreadyExistsPolicies.IGNORE) {
             return;
         }
-        elementById.set(element.id, element);
-        this.elementByIdByTag.set(element.tag, elementById);
+        if (root.xref === null) {
+            if (isDatasetTag(root.tag)) {
+                // Special case for dataset results
+                elementByRef.set(root.tag, root);
+            }
+        } else {
+            elementByRef.set(root.xref, root);
+        }
+        this.elementByRefByTag.set(root.tag, elementByRef);
     }
 
-    public get(tag: RootTag, id: I): T | undefined {
-        const elementById = this.elementByIdByTag.get(tag);
-        if (!elementById) {
+    public get(tag: RootTag, crossReferencePointer: X): R | undefined {
+        const elementByRef = this.elementByRefByTag.get(tag);
+        if (!elementByRef) {
             return undefined;
         }
-        return elementById.get(id);
+        return elementByRef.get(crossReferencePointer);
     }
 
-    public toArray(): T[][] {
-        return Array.from(this.elementByIdByTag.values()).map(elementById => Array.from(elementById.values()));
+    public toArray(): R[][] {
+        return Array.from(this.elementByRefByTag.values()).map(elementByRef => Array.from(elementByRef.values()));
     }
 
-    public getMap(): Map<RootTag, Map<I, T>> {
-        return this.elementByIdByTag;
+    public getMap(): RootMap<X, R> {
+        return this.elementByRefByTag;
     }
 }

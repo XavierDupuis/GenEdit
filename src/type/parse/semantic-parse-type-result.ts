@@ -1,5 +1,5 @@
-import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
+import { Entry } from '@type/level-2/entry';
 
-export type SemanticParseTypeResult<I = string | null, V = string | null> =
-    | ({ handled: true } & IdentifiableHierarchicalAttribute<I, V>)
-    | { handled: false };
+export interface SemanticParseTypeResult {
+    entry: Entry;
+}

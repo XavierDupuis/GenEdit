@@ -1,20 +1,18 @@
-import { HierarchicalStacker } from '../util/hierarchical-stacker';
+import { EntryStacker } from '../util/entry-stacker';
 import { ifAlreadyExistsPolicies, RootMapper } from '../util/root-mapper';
-import { SemanticParseLineHandler } from './semantic/semantic-parse';
+import { semanticParseLine } from './semantic/semantic-parse';
 import { ReferenceMapper } from '@util/reference-mapper';
 import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
 import { syntaxicParseLine } from './syntaxic/syntaxic-parse';
 import { SplitLineData, SplitLineResult } from '@type/parse/split-line-result';
 import { splitLine } from './structural/split-line';
-import { IdentifiableHierarchicalAttribute } from '@type/level-3/hierarchical-attribute';
 
 export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMapper: ReferenceMapper } => {
     console.log(`Parsing ${lines.length} lines`);
 
-    const hierarchicalStacker = new HierarchicalStacker<IdentifiableHierarchicalAttribute>();
+    const hierarchicalStacker = new EntryStacker();
     const rootMapper = new RootMapper(ifAlreadyExistsPolicies.OVERWRITE);
     const referenceMapper = new ReferenceMapper();
-    const semanticParseLineHandler = new SemanticParseLineHandler();
 
     const splitLineResults = getSplitLineResults(lines);
     const syntaxicParseResults = getSyntaxicParseResults(splitLineResults);
@@ -37,13 +35,13 @@ export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMappe
             continue;
         }
 
-        const parsed = semanticParseLineHandler.parse(syntaxicParseResult, hierarchicalStacker, referenceMapper, rootMapper);
-        if (parsed) {
+        const result = semanticParseLine(syntaxicParseResult, hierarchicalStacker, referenceMapper, rootMapper);
+        if (result.success) {
             lastKnownDepth = syntaxicParseResult.depth;
         } else {
-            console.log(`Skipping line: '${syntaxicParseResultContext}' `, `Unhandled type '${syntaxicParseResult.type}'`);
+            console.log('Semantic parse error', result.error);
         }
-        wasLastLineSkipped = !parsed;
+        wasLastLineSkipped = !result.success;
     }
 
     return { rootMapper, referenceMapper };
@@ -82,12 +80,5 @@ const getSplitLineResultContext = (splitLineData: SplitLineData): string => {
 };
 
 const getSyntaxicParseResultContext = (syntaxicParseData: SyntaxicParseData): string => {
-    switch (syntaxicParseData.type) {
-        case 'attribute':
-            return `Attribute with tag '${syntaxicParseData.tag}' and value '${syntaxicParseData.value ?? '<Empty string>'}'`;
-        case 'record':
-            return `Record with id '${syntaxicParseData.id}' and tag '${syntaxicParseData.tag}'`;
-        case 'dataset':
-            return `Dataset with tag '${syntaxicParseData.tag}'`;
-    }
+    return `Depth '${syntaxicParseData.depth}', Tag '${syntaxicParseData.tag}', Xref '${syntaxicParseData.xref ?? '<Empty string>'}', Value '${syntaxicParseData.value ?? '<Empty string>'}'`;
 };

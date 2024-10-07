@@ -1,5 +1,5 @@
 import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { Root } from '@type/level-2/root';
+import { Root } from '@type/parse/3-semantic/level-2/root';
 import { DatasetTag, isDatasetTag } from '@type/tag/dataset-tag';
 import { RootTag } from '@type/tag/root-tag';
 

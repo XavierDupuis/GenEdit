@@ -2,9 +2,9 @@ import { EntryStacker } from '../util/entry-stacker';
 import { ifAlreadyExistsPolicies, RootMapper } from '../util/root-mapper';
 import { semanticParseLine } from './semantic/semantic-parse';
 import { ReferenceMapper } from '@util/reference-mapper';
-import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
+import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/2-syntaxic/syntaxic-parse-type-result';
 import { syntaxicParseLine } from './syntaxic/syntaxic-parse';
-import { SplitLineData, SplitLineResult } from '@type/parse/split-line-result';
+import { SplitLineData, SplitLineResult } from '@type/parse/1-structural/split-line-result';
 import { splitLine } from './structural/split-line';
 
 export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMapper: ReferenceMapper } => {

@@ -1,4 +1,4 @@
-import { SplitLineResult } from '@type/parse/split-line-result';
+import { SplitLineResult } from '@type/parse/1-structural/split-line-result';
 
 export const splitLine = (line: string): SplitLineResult => {
     if (line.trim().length === 0) {

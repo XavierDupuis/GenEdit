@@ -1,4 +1,4 @@
-import { SyntaxicParseData } from '@type/parse/syntaxic-parse-type-result';
+import { SyntaxicParseData } from '@type/parse/2-syntaxic/syntaxic-parse-type-result';
 import { ReferenceMapper } from '@util/reference-mapper';
 import { RootMapper } from '@util/root-mapper';
 import { SuccessOrErrorResult } from '@type/success-or-error-result';
@@ -7,11 +7,11 @@ import { isDatasetTag } from '@type/tag/dataset-tag';
 import { isRecordTag } from '@type/tag/record-tag';
 import { isAttributeTag } from '@type/tag/attribute-tag';
 import { EntryStacker } from '@util/entry-stacker';
-import { SemanticParseTypeResult } from '@type/parse/semantic-parse-type-result';
-import { Reference } from '@type/level-3/reference';
-import { Property } from '@type/level-3/property';
-import { Record } from '@type/level-3/record';
-import { Dataset } from '@type/level-3/dataset';
+import { SemanticParseTypeResult } from '@type/parse/3-semantic/semantic-parse-type-result';
+import { Reference } from '@type/parse/3-semantic/level-3/reference';
+import { Property } from '@type/parse/3-semantic/level-3/property';
+import { Record } from '@type/parse/3-semantic/level-3/record';
+import { Dataset } from '@type/parse/3-semantic/level-3/dataset';
 
 export const semanticParseLine = (
     syntaxicParseData: SyntaxicParseData,

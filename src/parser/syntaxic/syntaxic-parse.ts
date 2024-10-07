@@ -1,6 +1,6 @@
 import { isCrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { SplitLineData } from '@type/parse/split-line-result';
-import { SyntaxicParseResult } from '@type/parse/syntaxic-parse-type-result';
+import { SplitLineData } from '@type/parse/1-structural/split-line-result';
+import { SyntaxicParseResult } from '@type/parse/2-syntaxic/syntaxic-parse-type-result';
 import { isTag } from '@type/tag/tag';
 
 export const syntaxicParseLine = ({ first, second, third }: SplitLineData): SyntaxicParseResult => {

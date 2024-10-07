@@ -1,5 +1,5 @@
 import { CrossReferencePointer } from '@type/cross-reference/cross-reference';
-import { Reference } from '@type/level-3/reference';
+import { Reference } from '@type/parse/3-semantic/level-3/reference';
 
 export type ReferenceMap<R extends Reference = Reference> = Map<CrossReferencePointer, R[]>;
 

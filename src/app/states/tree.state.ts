@@ -1,5 +1,5 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { Entry } from '@type/level-2/entry';
+import { Entry } from '@type/parse/3-semantic/level-2/entry';
 import { RootTags } from '@type/tag/root-tag';
 import { StdAttributeTags } from '@type/tag/std-attribute-tag';
 import { ReferenceMap } from '@util/reference-mapper';

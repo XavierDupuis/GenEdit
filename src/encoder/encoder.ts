@@ -1,5 +1,5 @@
-import { Entry, isEntry } from '@type/level-2/entry';
-import { Root } from '@type/level-2/root';
+import { Entry, isEntry } from '@type/parse/3-semantic/level-2/entry';
+import { Root } from '@type/parse/3-semantic/level-2/root';
 import { RootTag, RootTagOrder } from '@type/tag/root-tag';
 import { RootMap } from '@util/root-mapper';
 

@@ -6,8 +6,8 @@ import { TreeState } from '@app/states/tree.state';
 import { Store } from '@ngxs/store';
 import { map } from 'rxjs';
 import { RootMap } from '@util/root-mapper';
-import { Reference } from '@type/level-3/reference';
-import { Root } from '@type/level-2/root';
+import { Reference } from '@type/parse/3-semantic/level-3/reference';
+import { Root } from '@type/parse/3-semantic/level-2/root';
 
 const EXTERNAL_REFERENCE_START = 'http';
 

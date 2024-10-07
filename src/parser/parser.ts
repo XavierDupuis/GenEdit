@@ -26,8 +26,8 @@ export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMappe
             continue;
         }
 
-        const syntaxicParseResultContext = getSyntaxicParseResultContext(syntaxicParseResult);
         if (wasLastLineSkipped && syntaxicParseResult.depth > lastKnownDepth) {
+            const syntaxicParseResultContext = getSyntaxicParseResultContext(syntaxicParseResult);
             console.log(
                 `Skipping syntaxic parsed result: '${syntaxicParseResultContext}' `,
                 `This result is deeper (${syntaxicParseResult.depth}) than last known parsed ancestor (${lastKnownDepth})`

@@ -210,7 +210,6 @@ export const toIndividualRecord = (entry: IndividualRecordEntry): IndividualReco
             'BIRT',
             entry => {
                 const BIRTIndividualEventStructure = toBIRTIndividualEventStructure(entry);
-                console.log('BIRTH', BIRTIndividualEventStructure, entry);
                 if (BIRTIndividualEventStructure) {
                     individualRecord.INDI.INDIVIDUAL_EVENT_STRUCTURE ??= [];
                     individualRecord.INDI.INDIVIDUAL_EVENT_STRUCTURE.push({ value: BIRTIndividualEventStructure });

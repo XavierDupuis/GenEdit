@@ -1,5 +1,6 @@
 import { Entry, isEntry } from '@type/parse/3-semantic/level-2/entry';
 import { Tag } from '@type/tag/tag';
+import { Logger } from '@util/logger';
 
 export type StructureEntryHandlers = Map<Tag, (entry: Entry) => void>;
 
@@ -19,6 +20,6 @@ export const handleEntry = (entry: Entry, handlers: StructureEntryHandlers): voi
     if (handler) {
         handler(entry);
     } else {
-        console.log(`Unhandled tag '${entry.tag}' on following entry :`, entry);
+        Logger.warn(`Unhandled tag '${entry.tag}' on following entry :`, entry);
     }
 };

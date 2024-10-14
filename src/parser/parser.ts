@@ -6,9 +6,10 @@ import { SyntaxicParseData, SyntaxicParseResult } from '@type/parse/2-syntaxic/s
 import { syntaxicParseLine } from './syntaxic/syntaxic-parse';
 import { SplitLineData, SplitLineResult } from '@type/parse/1-structural/split-line-result';
 import { splitLine } from './structural/split-line';
+import { Logger } from '@util/logger';
 
 export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMapper: ReferenceMapper } => {
-    console.log(`Parsing ${lines.length} lines`);
+    Logger.debug(`Parsing ${lines.length} lines`);
 
     const hierarchicalStacker = new EntryStacker();
     const rootMapper = new RootMapper(ifAlreadyExistsPolicies.OVERWRITE);
@@ -21,14 +22,14 @@ export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMappe
     let wasLastLineSkipped = false;
     for (const syntaxicParseResult of syntaxicParseResults) {
         if (!syntaxicParseResult.success) {
-            console.log('Skipping syntaxic parsed result:', syntaxicParseResult.error);
+            Logger.warn('Skipping syntaxic parsed result:', syntaxicParseResult.error);
             wasLastLineSkipped = true;
             continue;
         }
 
         if (wasLastLineSkipped && syntaxicParseResult.depth > lastKnownDepth) {
             const syntaxicParseResultContext = getSyntaxicParseResultContext(syntaxicParseResult);
-            console.log(
+            Logger.warn(
                 `Skipping syntaxic parsed result: '${syntaxicParseResultContext}' `,
                 `This result is deeper (${syntaxicParseResult.depth}) than last known parsed ancestor (${lastKnownDepth})`
             );
@@ -39,7 +40,7 @@ export const parse = (lines: string[]): { rootMapper: RootMapper; referenceMappe
         if (result.success) {
             lastKnownDepth = syntaxicParseResult.depth;
         } else {
-            console.log('Semantic parse error', result.error);
+            Logger.error('Semantic parse error', result.error);
         }
         wasLastLineSkipped = !result.success;
     }
@@ -52,7 +53,7 @@ const getSplitLineResults = (lines: string[]): SplitLineResult[] => {
     for (const line of lines) {
         const splitLineResult = splitLine(line);
         if (!splitLineResult.success) {
-            console.log(`Skipping line: '${line}' `, 'Split error', splitLineResult.error);
+            Logger.warn(`Skipping line: '${line}' `, 'Split error', splitLineResult.error);
         }
         splitLineResults.push(splitLineResult);
     }
@@ -68,7 +69,7 @@ const getSyntaxicParseResults = (lines: SplitLineResult[]): SyntaxicParseResult[
         }
         const parseLineResult = syntaxicParseLine(line);
         if (!parseLineResult.success) {
-            console.log(`Skipping line: '${getSplitLineResultContext(line)}' `, 'Parse error', parseLineResult.error);
+            Logger.warn(`Skipping line: '${getSplitLineResultContext(line)}' `, 'Parse error', parseLineResult.error);
         }
         parseLineResults.push(parseLineResult);
     }

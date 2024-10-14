@@ -1,4 +1,5 @@
 import { Entry } from '@type/parse/3-semantic/level-2/entry';
+import { Logger } from '@util/logger';
 
 export class EntryStacker<E extends Entry = Entry> {
     private stack: E[] = [];
@@ -10,7 +11,7 @@ export class EntryStacker<E extends Entry = Entry> {
             return;
         }
         if (!this.last) {
-            console.log('No parent to push to for attribute', item, depth, this.stack.length);
+            Logger.error('No parent to push to for attribute', item, depth, this.stack.length);
             return;
         }
 
